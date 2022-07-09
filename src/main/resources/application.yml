@@ -1,25 +1,26 @@
 spring:
   application:
     name: lyol
-  database: PostgresDB
   datasource:
-    url: jdbc:postgresql://${database.host:localhost}:${database.port:5434}/${database.name:postgres}?currentSchema=${database.schema:lyol}
+    url: jdbc:postgresql://${database.host:localhost}:${database.port:5434}/${database.name:lyol}?currentSchema=${database.schema:lyol}
     username: ${database.username:postgres}
     password: ${database.password:postgres}
     driver-class-name: org.postgresql.Driver
-    initializatino-mode: always
     hikari:
       connection-timeout: 20000
       maximumPoolSize: 50
   jpa:
     generate-ddl: true
-    #database-platform: com.p3solutions.taskhandler.utility.postgres_utils.JsonPostgreSQLDialect
     database: postgresql
     show-sql: false
     hibernate:
       ddl-auto: update
   main:
     web-application-type: none
+
+scheduleFile:
+  type: csv
+  path: /Users/shariq/Documents/Personal/src_code/Lyol_v1.0/schedule.csv
 
 #server:
 #  port: ${port:1997}

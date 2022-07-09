@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,9 +19,10 @@ import java.util.List;
 @Table
 public class Schedule {
     @Id
+    @Builder.Default
     private LocalDate date = LocalDate.now();
-    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(FetchMode.SELECT)
-    private List<Activity> activities;
-    private int score;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<Activity> activities = new ArrayList<>();
+    private float score;
 }

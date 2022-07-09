@@ -1,0 +1,5 @@
+Id, Activity, Life section, Start time , End time, isImportant, Activity status, Reasons for not completing
+1, Pray Fajr, Islamic, 05:30, 06:00, true, COMPLETED,
+2, Sleep for some time, Health, 06:00, 08:30, true, COMPLETED,
+3, Wake up at 8.30 and brush teeth, Life style, 08:30, 09:00, false, COMPLETED,
+

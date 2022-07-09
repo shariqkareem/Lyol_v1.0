@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 
 @Service
@@ -50,8 +51,9 @@ public class ScheduleReaderServiceCsv implements ScheduleReaderService{
                 .withIgnoreQuotations(false).withQuoteChar('"').withStrictQuotes(false).build();
         try (BufferedReader br = new BufferedReader(new FileReader(scheduleFile));
              CSVReader csvReader = new CSVReaderBuilder(br).withCSVParser(parser).build()) {
-            String[] row;
-            csvReader.skip(1);
+            String[] row = csvReader.readNext();
+            if(!validateHeaders(row))
+                throw new InputMismatchException("Column headers are wrong");
             while ((row = csvReader.readNext())!=null) {
                 if(row.length==1 && row[0]==null)
                     break;
@@ -77,6 +79,19 @@ public class ScheduleReaderServiceCsv implements ScheduleReaderService{
             e.printStackTrace();
             throw new Exception("Error when reading schedule file. Refer stacktrace for details");
         }
+    }
+
+    private boolean validateHeaders(String[] row) {
+        return row.length == 8 &&
+                (row[0].trim().equals("Id")
+                && row[1].trim().equals("Activity")
+                && row[2].trim().equals("Life section")
+                && row[3].trim().equals("Start time")
+                && row[4].trim().equals("End time")
+                && row[5].trim().equals("isImportant")
+                && row[6].trim().equals("Activity status")
+                && row[7].trim().equals("Reasons for not completing")
+        );
     }
 
     private List<Reason> readReasons(String stringCellValue) {

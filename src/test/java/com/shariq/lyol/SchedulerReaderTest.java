@@ -1,10 +1,7 @@
 package com.shariq.lyol;
 
 import com.shariq.lyol.service.ScheduleReaderService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,5 +30,11 @@ public class SchedulerReaderTest {
     public void shouldThrowErrorWhenScheduleDoesntExist(){
         Assumptions.assumeFalse(filePath.endsWith("schedule.csv"));
         Assertions.assertThrows(IllegalArgumentException.class, () -> scheduleReaderService.readAndSaveSchedule());
+    }
+
+    @Test
+    @Disabled
+    public void shouldFailWhenColumnHeadersAreWrong(){
+        Assertions.assertThrows(Exception.class, () -> scheduleReaderService.readAndSaveSchedule());
     }
 }

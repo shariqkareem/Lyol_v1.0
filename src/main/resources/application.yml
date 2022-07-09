@@ -22,5 +22,7 @@ scheduleFile:
   type: csv
   path: /Users/shariq/Documents/Personal/src_code/Lyol_v1.0/schedule.csv
 
+isTestRun: false
+
 #server:
 #  port: ${port:1997}

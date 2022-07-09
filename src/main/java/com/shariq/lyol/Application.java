@@ -4,6 +4,7 @@ import com.shariq.lyol.service.DayAnalysisService;
 import com.shariq.lyol.service.ScheduleReaderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +16,8 @@ import java.util.Scanner;
 public class Application implements CommandLineRunner {
     private final ScheduleReaderService scheduleReaderService;
     private final DayAnalysisService dayAnalysisService;
+    @Value(value = "${isTestRun}")
+    private boolean isTestRun;
 
     @Autowired
     public Application(ScheduleReaderService scheduleReaderService, DayAnalysisService dayAnalysisService) {
@@ -40,7 +43,7 @@ public class Application implements CommandLineRunner {
         System.out.println("5. Add Blockers");
 
         Scanner sc= new Scanner(System.in);
-        while(true) {
+        while(!isTestRun) {
             switch (sc.nextInt()) {
                 case 1:
                 case 2: {

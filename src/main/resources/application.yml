@@ -2,7 +2,7 @@ spring:
   application:
     name: lyol
   datasource:
-    url: jdbc:postgresql://${database.host:localhost}:${database.port:5434}/${database.name:lyol}?currentSchema=${database.schema:lyol}
+    url: jdbc:postgresql://${database.host:localhost}:${database.port:5432}/${database.name:lyol}?currentSchema=${database.schema:lyol}
     username: ${database.username:postgres}
     password: ${database.password:postgres}
     driver-class-name: org.postgresql.Driver
@@ -19,8 +19,8 @@ spring:
     web-application-type: none
 
 scheduleFile:
-  type: csv
-  path: /Users/shariq/Documents/Personal/src_code/Lyol_v1.0/schedule.csv
+  type: xlsx
+  path: src/main/resources/schedule.xlsx
 
 isTestRun: false
 

@@ -39,8 +39,8 @@ public class Application implements CommandLineRunner {
         System.out.println("1. Provide day's schedule");
         System.out.println("2. Update the progress");
         System.out.println("3. Check day's score");
-        System.out.println("4. Add Life sections");
-        System.out.println("5. Add Blockers");
+        System.out.println("4. Show options");
+        System.out.println("5. Exit");
 
         Scanner sc= new Scanner(System.in);
         while(!isTestRun) {
@@ -55,7 +55,14 @@ public class Application implements CommandLineRunner {
                     dayAnalysisService.calculateDaysScore();
                     break;
                 }
-                case 7:
+                case 4:
+                    System.out.println("1. Provide day's schedule");
+                    System.out.println("2. Update the progress");
+                    System.out.println("3. Check day's score");
+                    System.out.println("4. Show options");
+                    System.out.println("5. Exit");
+                    break;
+                case 5:
                     log.info("-------- Bye Bye -------");
                     return;
                 default:
@@ -63,10 +70,8 @@ public class Application implements CommandLineRunner {
                     System.out.println("1. Provide day's schedule");
                     System.out.println("2. Update the progress");
                     System.out.println("3. Check day's score");
-                    System.out.println("4. Add Life sections");
-                    System.out.println("5. Add Blockers");
-                    System.out.println("6. Show options");
-                    System.out.println("7. Exit");
+                    System.out.println("4. Show options");
+                    System.out.println("5. Exit");
             }
         }
     }

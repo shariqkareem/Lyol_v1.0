@@ -60,8 +60,8 @@ public class ScheduleReaderServiceCsv implements ScheduleReaderService{
                 String activityId = schedule.getDate().toString() + " " + row[0].trim();
                 boolean isNewActivity = false;
                 Activity activity = schedule.getActivities().stream()
-                        .filter(activity1 -> activity1.getId().equals(activityId)).findFirst()
-                        .orElse(Activity.builder().id(activityId).build());
+                        .filter(activity1 -> false).findFirst()
+                        .orElse(Activity.builder().id(1).build()); // TODO - fix this when developing csv. Temporarily changed to compile
                 if(activity.getActivity() == null)
                     isNewActivity = true;
                 activity.setActivity(row[1]);

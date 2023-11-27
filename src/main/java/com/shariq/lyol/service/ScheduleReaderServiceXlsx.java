@@ -5,6 +5,7 @@ import com.shariq.lyol.models.Activity;
 import com.shariq.lyol.models.Reason;
 import com.shariq.lyol.models.Schedule;
 import com.shariq.lyol.repositories.ScheduleRepo;
+import com.shariq.lyol.utils.Utils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,17 +53,15 @@ public class ScheduleReaderServiceXlsx implements ScheduleReaderService{
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 Iterator<Cell> cellIterator = row.cellIterator();
-
+                cellIterator.next();
                 Activity activity = new Activity();
                 activity.setActivity(cellIterator.next().getStringCellValue());
                 activity.setLifeSection(cellIterator.next().getStringCellValue());
                 activity.setActivityStatus(ActivityStatus.getKey(cellIterator.next().getStringCellValue()));
-                //activity.setStartTime(LocalTime.parse(new DataFormatter().formatCellValue(cellIterator.next()).replace("-PM", "").replace("-AM", "")));
-                activity.setStartTime(LocalTime.parse("05:45"));
-                //activity.setEndTime(LocalTime.parse(new DataFormatter().formatCellValue(cellIterator.next())));
-                activity.setEndTime(LocalTime.parse("12:45"));
-                activity.setImportant(row.getCell(5).getBooleanCellValue());
-                activity.setReasonsForNotCompleting((row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) ? null : readReasons(row.getCell(6).getStringCellValue()));
+                activity.setStartTime(Utils.parseTimeFromCell(cellIterator.next()));
+                activity.setEndTime(Utils.parseTimeFromCell(cellIterator.next()));
+                activity.setImportant(row.getCell(6).getBooleanCellValue());
+                activity.setReasonsForNotCompleting((row.getCell(7, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) ? null : readReasons(row.getCell(6).getStringCellValue()));
 
                 schedule.getActivities().add(activity);
             }

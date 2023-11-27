@@ -18,7 +18,8 @@ import java.util.List;
 @Table
 public class Activity{
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
     private String activity;
     private String lifeSection;
     private boolean isImportant;

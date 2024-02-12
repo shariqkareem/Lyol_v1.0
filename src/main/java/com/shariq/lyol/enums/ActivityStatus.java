@@ -17,10 +17,12 @@ public enum ActivityStatus {
     }
 
     public static ActivityStatus getKey(String value) {
-        try{
+        try {
+            if(value.isBlank()|| value.isEmpty())
+                return ActivityStatus.TODO;
             return ActivityStatus.valueOf(value);
-        }catch (Exception e){
-            return null;
+        } catch (Exception e){
+            return ActivityStatus.TODO;
         }
     }
 }

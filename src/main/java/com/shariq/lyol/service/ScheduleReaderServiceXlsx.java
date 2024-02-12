@@ -53,15 +53,14 @@ public class ScheduleReaderServiceXlsx implements ScheduleReaderService{
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 Iterator<Cell> cellIterator = row.cellIterator();
-                cellIterator.next();
                 Activity activity = new Activity();
                 activity.setActivity(cellIterator.next().getStringCellValue());
                 activity.setLifeSection(cellIterator.next().getStringCellValue());
                 activity.setActivityStatus(ActivityStatus.getKey(cellIterator.next().getStringCellValue()));
                 activity.setStartTime(Utils.parseTimeFromCell(cellIterator.next()));
                 activity.setEndTime(Utils.parseTimeFromCell(cellIterator.next()));
-                activity.setImportant(row.getCell(6).getBooleanCellValue());
-                activity.setReasonsForNotCompleting((row.getCell(7, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) ? null : readReasons(row.getCell(6).getStringCellValue()));
+                activity.setImportant(cellIterator.next().getBooleanCellValue());
+                activity.setReasonsForNotCompleting((row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) ? null : readReasons(row.getCell(6).getStringCellValue()));
 
                 schedule.getActivities().add(activity);
             }

@@ -4,7 +4,6 @@ import com.shariq.lyol.enums.ActivityStatus;
 import com.shariq.lyol.models.Activity;
 import com.shariq.lyol.models.Reason;
 import com.shariq.lyol.models.Schedule;
-import com.shariq.lyol.repositories.ScheduleRepo;
 import com.shariq.lyol.utils.Utils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,21 +25,21 @@ import java.util.List;
         value="scheduleFile.type",
         havingValue = "xlsx")
 public class ScheduleReaderServiceXlsx implements ScheduleReaderService{
-    private final ScheduleRepo scheduleRepo;
+    private final ScheduleService scheduleService;
+    private final ActivityService activityService;
+    private final ReasonService reasonService;
     @Value(value = "${scheduleFile.path}")
     private String filePath;
 
     @Autowired
-    public ScheduleReaderServiceXlsx(ScheduleRepo scheduleRepo) {
-        this.scheduleRepo = scheduleRepo;
+    public ScheduleReaderServiceXlsx(ScheduleService scheduleService, ActivityService activityService, ReasonService reasonService) {
+        this.scheduleService = scheduleService;
+        this.activityService = activityService;
+        this.reasonService = reasonService;
     }
 
     public void readAndSaveSchedule() throws Exception {
-        Schedule schedule = Schedule.builder()
-                .date(LocalDate.now())
-                .activities(new ArrayList<>())
-                .score(0)
-                .build();
+        Schedule schedule = scheduleService.checkIfScheduleExistsOrCreateNew();
         try {
             File scheduleFile = new File(filePath);
             if (!scheduleFile.exists())
@@ -53,26 +52,31 @@ public class ScheduleReaderServiceXlsx implements ScheduleReaderService{
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 Iterator<Cell> cellIterator = row.cellIterator();
-                Activity activity = new Activity();
+                Activity activity = activityService.getActivityIfExistsOrCreateNew(row.getCell(0).getStringCellValue(),
+                        Utils.parseTimeFromCell(row.getCell(3)),
+                        Utils.parseTimeFromCell(row.getCell(4)));
                 activity.setActivity(cellIterator.next().getStringCellValue());
                 activity.setLifeSection(cellIterator.next().getStringCellValue());
                 activity.setActivityStatus(ActivityStatus.getKey(cellIterator.next().getStringCellValue()));
                 activity.setStartTime(Utils.parseTimeFromCell(cellIterator.next()));
                 activity.setEndTime(Utils.parseTimeFromCell(cellIterator.next()));
                 activity.setImportant(cellIterator.next().getBooleanCellValue());
-                activity.setReasonsForNotCompleting((row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) ? null : readReasons(row.getCell(6).getStringCellValue()));
+                activity.setReasonsForNotCompleting((row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals(""))
+                        ? null : readReasons(row.getCell(6).getStringCellValue(), activity));
+                activity.setSchedule(schedule);
 
-                schedule.getActivities().add(activity);
+                if(activity.getActivityId() == null || activity.getActivityId().equals(0))
+                    schedule.getActivities().add(activity);
             }
-            scheduleRepo.save(schedule);
+            scheduleService.createOrUpdateSchedule(schedule);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Error when reading schedule file. Refer stacktrace for details");
         }
     }
 
-    private List<Reason> readReasons(String stringCellValue) {
-        List<Reason> reasons = new ArrayList<>();
+    private List<Reason> readReasons(String stringCellValue, Activity activity) {
+        List<Reason> reasons = CollectionUtils.isEmpty(activity.getReasonsForNotCompleting()) ? new ArrayList<>() : activity.getReasonsForNotCompleting();
         String[] reasonsArray;
         if(stringCellValue.contains("&"))
             reasonsArray = stringCellValue.split("&");
@@ -80,10 +84,13 @@ public class ScheduleReaderServiceXlsx implements ScheduleReaderService{
             reasonsArray = new String[]{stringCellValue};
         for (String s : reasonsArray) {
             String[] split = s.split("\\|");
-            Reason reason = new Reason();
+            Reason reason = reasonService.checkIfReasonExistsOrCreateNew(split[0], split[1], activity);
             reason.setReason(split[0]);
             reason.setBlocker(split[1]);
-            reasons.add(reason);
+            reason.setActivity(activity);
+
+            if(reason.getReasonId() == null || reason.getReasonId() == 0)
+                reasons.add(reason);
         }
         return reasons;
     }

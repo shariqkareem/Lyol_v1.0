@@ -2,6 +2,7 @@ package com.shariq.lyol;
 
 import com.shariq.lyol.service.DayAnalysisService;
 import com.shariq.lyol.service.ScheduleReaderService;
+import com.shariq.lyol.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,15 +15,17 @@ import java.util.Scanner;
 @SpringBootApplication
 @Slf4j
 public class Application implements CommandLineRunner {
-    private final ScheduleReaderService scheduleReaderService;
     private final DayAnalysisService dayAnalysisService;
+    private final ScheduleService scheduleService;
+    private final ScheduleReaderService scheduleReaderService;
     @Value(value = "${isTestRun}")
     private boolean isTestRun;
 
     @Autowired
-    public Application(ScheduleReaderService scheduleReaderService, DayAnalysisService dayAnalysisService) {
-        this.scheduleReaderService = scheduleReaderService;
+    public Application(DayAnalysisService dayAnalysisService, ScheduleService scheduleService, ScheduleReaderService scheduleReaderService) {
         this.dayAnalysisService = dayAnalysisService;
+        this.scheduleService = scheduleService;
+        this.scheduleReaderService = scheduleReaderService;
     }
 
     public static void main(String[] args) {
@@ -41,6 +44,7 @@ public class Application implements CommandLineRunner {
         System.out.println("3. Check day's score");
         System.out.println("4. Show options");
         System.out.println("5. Exit");
+        System.out.println("6. Clear day's schedule");
 
         Scanner sc= new Scanner(System.in);
         while(!isTestRun) {
@@ -61,10 +65,16 @@ public class Application implements CommandLineRunner {
                     System.out.println("3. Check day's score");
                     System.out.println("4. Show options");
                     System.out.println("5. Exit");
+                    System.out.println("6. Clear day's schedule");
                     break;
                 case 5:
                     log.info("-------- Bye Bye -------");
                     return;
+                case 6:
+                    log.info("Clearing schedule");
+                    scheduleService.clearSchedule();
+                    log.info("Cleared schedule");
+                    break;
                 default:
                     log.error("!!! Invalid option. Select one of the following !!!");
                     System.out.println("1. Provide day's schedule");

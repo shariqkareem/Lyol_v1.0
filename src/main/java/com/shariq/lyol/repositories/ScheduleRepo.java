@@ -8,6 +8,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
-public interface ScheduleRepo extends JpaRepository<Schedule, Integer> {
+public interface ScheduleRepo extends JpaRepository<Schedule, LocalDate> {
     Optional<Schedule> findByDate(LocalDate date);
 }

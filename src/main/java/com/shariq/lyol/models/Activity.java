@@ -19,13 +19,16 @@ import java.util.List;
 public class Activity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Integer activityId;
     private String activity;
     private String lifeSection;
     private boolean isImportant;
     private LocalTime startTime;
     private LocalTime endTime;
     private ActivityStatus activityStatus;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Reason> reasonsForNotCompleting;
+    @ManyToOne
+    @JoinColumn(name = "date")
+    private Schedule schedule;
 }

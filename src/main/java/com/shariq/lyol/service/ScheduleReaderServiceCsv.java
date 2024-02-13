@@ -61,7 +61,7 @@ public class ScheduleReaderServiceCsv implements ScheduleReaderService{
                 boolean isNewActivity = false;
                 Activity activity = schedule.getActivities().stream()
                         .filter(activity1 -> false).findFirst()
-                        .orElse(Activity.builder().id(1).build()); // TODO - fix this when developing csv. Temporarily changed to compile
+                        .orElse(Activity.builder().activityId(1).build()); // TODO - fix this when developing csv. Temporarily changed to compile
                 if(activity.getActivity() == null)
                     isNewActivity = true;
                 activity.setActivity(row[1]);
